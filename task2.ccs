@@ -3,8 +3,8 @@ proc TB = b.TB + rone.TE + rtwo.TE
 proc TW = w.TW + lone.TE + ltwo.TE
 
 proc B1 = TB[b1/b, r2/rone, r3/rtwo, l1/l, r1/r, w1/w, l0/lone, l0/ltwo]
-proc B2 = TB[b2/b, r3/rone, r4/rtwo, l1/l, r1/r, w2/w, l1/lone, l0/ltwo]
-proc B3 = TB[b3/b, r4/rone, r5/rtwo, l1/l, r1/r, w3/w, l2/lone, l1/ltwo]
+proc B2 = TB[b2/b, r3/rone, r4/rtwo, l2/l, r2/r, w2/w, l1/lone, l0/ltwo]
+proc B3 = TB[b3/b, r4/rone, r5/rtwo, l3/l, r3/r, w3/w, l2/lone, l1/ltwo]
 
 proc E4 = TE[b4/b, w4/w, r5/rone, r6/rtwo, l3/lone, l2/ltwo, l4/l, r4/r]
 
