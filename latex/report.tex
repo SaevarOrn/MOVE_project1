@@ -184,13 +184,52 @@
 
 \begin{homeworkProblem}
 
-  Task 1 was to implement a scheduler in ccs\ldots
+    The scheduler is made up of a $n$ cells, where cell $i$ controls $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the proces to start and end execution. Each cell is defined using the following template:
+    \[
+        P = \overline{in}.a.out.b.P
+    \]
+    We then connect the cells together using relabelling and the scheduler then simply runs each cell in parallel. We restrict the ports $in$ and $out$ since they must be matched by another cell but we allow $a$ and $b$ to communicate with the environment so we can monitor the actions the sche. Each cell initially waits for a signal before starting and so to prevent a deadlock, we send a single signal to the first cell which starts the scheduler.
 
-Listing \ref{../task1.ccs} shows the CCS code for the scheduler.
+    Listing \ref{../task1.ccs} shows the CCS code for a scheduler with four processes.
 
-\perlscript{../task1.ccs}{Scheduler .CCS file}
+    \perlscript{../task1.ccs}{Scheduler .CCS file}
 
-The scheduler was verifier with the file shown in listing \ref{../task1.mu} and foo bar bloo blah\ldots
+    There are two requirements that the scheduler must satisfy. The first requirement is that each process must start in a cyclical order, $P_{i+1}$ starts after $P_{i}$ and $P_1$ starts after $P_n$. The second requirement is that each cell must alternate between $a$ and $b$ actions.
+
+    First we will show that if we ignore the $b$ moves, then the scheduler is bisimilar to a process that simply performs actions $a_1,a_2,\dots,a_n$ repeadedly:
+    \[
+        cyclic = a_1.a_2.\dots.a_n.cyclic
+    \]
+    The process can perform $a$ and $b$ moves and so we need to change it such that the $b$ moves cannot be observed. The way we do this is by defining an observer that runs in parallel with the scheduler and recieves the $b$ moves of the cells.
+    \[
+        B = \sum_{i=1}^n\overline{b_i}.B
+    \]
+    We then restrict the $b$ moves so only the $a$ moves are visible but the execution of the scheduler is not affected. The definition for this new process is as follows:
+    \[
+        Y = (S|B)\backslash\{b_i|1\le i\le n\}
+    \]
+    Using the cwb workbench, we can now easily verify that $cyclic$ and $Y$ are bisimilar.
+
+    For the second requirement, we will verify that a single cell must always alternate between $a$ and $b$. Instead of doing this for each cell in the scheduler, it is enough to show that it holds for the template they are instanciated from. Since we are only interesed in $a$ and $b$ actions, we must hide the $in$ and $out$ actions. Similar as to before, we define a new process, $Z$, that can send and recieve $in$ and $out$ actions.
+    \[
+        Z = in.\overline{out}.Z \\
+    \]
+    And then run $Z$ and the template, $P$, in parallel with the $in$ and $out$ actions restricted.
+    \[
+        W = (Z|P)\backslash\{in,out\}
+    \]
+    If the scheduler satisfies the property that each cell alternates between $a$ and $b$ actions, then $W$ should be weakly bisimilar to the following process:
+    \[
+        alternate = \overline{a\vphantom{d}}.\overline{b}.alternate
+    \]
+    Again we use the cwb workbench to verify that $W$ and $alternate$ are weakly bisimilar.
+
+
+    
+    
+
+
+    The scheduler was verifier with the file shown in listing \ref{../task1.mu} and foo bar bloo blah\ldots
 
 \perlscript{../task1.mu}{Scheduler .MU file}
 
