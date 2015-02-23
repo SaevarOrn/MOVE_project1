@@ -53,5 +53,10 @@ prop a3_after_b3 = AG([b3]A([b3]ff U <a3>tt))
 prop b4_after_a4 = AG([a4]A([a4]ff U <b4>tt))
 prop a4_after_b4 = AG([b4]A([b4]ff U <a4>tt))
 
-prop alternate = a1_after_b1/\b1_after_a1/\a2_after_b2/\b2_after_a2/\a3_after_b3/\b3_after_a3/\a4_after_b4/\b4_after_a4
+* the following lines are split for readability
+prop a_after_b = a1_after_b1/\a2_after_b2/\a3_after_b3/\a4_after_b4
+prop b_after_a = b1_after_a1/\b2_after_a2/\b3_after_a3/\b4_after_a4
+
+* ai must follow bi and bi must follow ai
+prop alternate = a_after_b/\b_after_a
 
