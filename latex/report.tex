@@ -92,9 +92,7 @@
 % Creates a new command to include a perl script, the first parameter is the filename of the script (without .pl), the second parameter is the caption
 \definecolor{background}{rgb}{0.98, 1, 1}
 \newcommand{\shellcmd}[1]{
-	\begin{center}
 	\texttt{\# cwb-nc> #1}\\
-	\end{center}
 }
 \newcommand{\perlscript}[2]{
 \begin{itemize}
@@ -258,7 +256,7 @@
 
 	Listing \ref{../task2.ccs} demonstrates this functionality:
 
-\perlscript{../task2.ccs}{1-Dimensional Solitaire .CCS file}
+\perlscript{../task2.ccs}{1-Dimensional Solitaire .CCS file (task2.ccs)}
   Each template behaves differently based on what color it represents. Black tiles can jump either one or two tiles to the right depending on whether the $Empty$ tile is one or two tiles to the right (white tiles mirror this functionality in the opposite direction). Recall that $Empty$ tiles can swap with any adjacent tile.
   Relabelling the processes ensured that changing a process (for example, \(B \rightarrow W\)) allowed new input/output pairs to be matched.
 
@@ -285,15 +283,15 @@ In a similar fashion, if we had started in the configuration \([B_1|B_2|E_3|W_4|
   Showing possible moves does not prove that the game is solvable (even though we can use these moves to solve it in our heads).
   To verify the correctness of the solitaire game, we simply asked if a configuration representing a solved game was reachable: 
   
-\perlscript{../task2.mu}{1-Dimensional Solitaire .MU file}
+\perlscript{../task2.mu}{1-Dimensional Solitaire .MU file (task2.mu)}
 
   This elegant solution works due to the way that the game was modelled.
 	Colored tiles (\(B_i, W_i\)) can always indicate what color occupies tile $i$ since $proc ~ Board$ does not restrict on $W_i$ (for any $i$).
 	Therefore we can describe the property of a $solved$ game as ``Tiles $1-3$ are white and $5-7$ are black''.
 	Using the fixed point-notation of Hennessy–Milner logic, we simply ask if the $solved$ state is reachable from the start configuration:
-\shellcmd{
-		chk Board is\_solvable
-}
+	\shellcmd{load task2.ccs}
+	\shellcmd{load task2.mu}
+	\shellcmd{chk Board is\_solvable}
 
 	\ldots which the concurrency workbench indicates as being $TRUE$.
 
