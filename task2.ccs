@@ -15,5 +15,3 @@ proc W7 = TW[w7/w, l6/lone, l5/ltwo, l7/l, r7/r, b7/b, r0/rone, r0/rtwo]
 proc Board = (B1|B2|B3|E4|W5|W6|W7)\restrict_set
 
 set restrict_set = {l0,l1,l2,l3,l4,l5,l6,l7,r0,r1,r2,r3,r4,r5,r6,r7}
-
-* (trash)  b1,b2,b3,b4,b5,b6,b7,w1,w2,w3,w4,w5,w6,w7,
