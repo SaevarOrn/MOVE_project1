@@ -94,9 +94,15 @@
 }
 
 % Creates a new command to include a perl script, the first parameter is the filename of the script (without .pl), the second parameter is the caption
+\definecolor{background}{rgb}{0.98, 1, 1}
+\newcommand{\shellcmd}[1]{
+	\begin{center}
+	\texttt{\# cwb-nc> #1}\\
+	\end{center}
+}
 \newcommand{\perlscript}[2]{
 \begin{itemize}
-\item[]\lstinputlisting[caption=#2,label=#1]{#1}
+	\item[]\lstinputlisting[backgroundcolor=\color{background},stepnumber=1,caption=#2,label=#1]{#1}
 \end{itemize}
 }
 
@@ -302,7 +308,7 @@ Since these processes are running in parallel and restrictions are in place, $E_
 
 In a similar fashion, if we had started in the configuration \([B_1|B_2|E_3|W_4|B_5|W_6|W_7]\), $W_4$ would be able to swap places with $E_3$ on $l3$ since $W_4$ would have been:
 \[
-	proc ~= W_4 = ~ w_4.W_4 + ~ l3.E_4 + ~ l2.E_4
+	proc ~ W_4 = ~ w_4.W_4 + ~ l3.E_4 + ~ l2.E_4
 \]
 
 % CORRECTNESS AND VERIFICATION DETAILS BELOW
@@ -315,10 +321,10 @@ In a similar fashion, if we had started in the configuration \([B_1|B_2|E_3|W_4|
   This elegant solution works due to the way that the game was modelled.
 	Colored tiles (\(B_i, W_i\)) can always indicate what color occupies tile $i$ since $proc ~ Board$ does not restrict on $W_i$ (for any $i$).
 	Therefore we can describe the property of a $solved$ game as ``Tiles $1-3$ are white and $5-7$ are black''.
-	Using the fixed point-notation of Hennessy–Milner logic, we simply ask if the state is reachable from the start configuration:
-	\[
-		\$~cwb-nc> ~ chk~Board~is\_solvable
-	\]
+	Using the fixed point-notation of Hennessy–Milner logic, we simply ask if the $solved$ state is reachable from the start configuration:
+\shellcmd{
+		chk Board is\_solvable
+}
 
 	\ldots which the concurrency workbench indicates as being $TRUE$.
 

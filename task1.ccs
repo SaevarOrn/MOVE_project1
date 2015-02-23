@@ -1,7 +1,7 @@
 * P is a template for a cell
 proc P = 'in.a.out.b.P
 
-* Template instantiations for a schedule of size 4
+* Template instantiations 
 proc P1 = P[c4/in, a1/a, c1/out, b1/b]
 proc P2 = P[c1/in, a2/a, c2/out, b2/b]
 proc P3 = P[c2/in, a3/a, c3/out, b3/b]
@@ -27,3 +27,25 @@ proc Y = (S|B)\{b1,b2,b3,b4}
 
 * command 'eq W Alt' confirms that the schedular is alternating on a and b
 proc W = (P|Z)\{in,out}
+
+* variations for n = {3 and 5}:
+
+proc Pt1 = P[c3/in, a1/a, c1/out, b1/b]
+proc Pt3 = P[c2/in, a3/a, c3/out, b3/b]
+
+proc Pf1 = P[c5/in, a1/a, c1/out, b1/b]
+proc P5 = P[c4/in, a5/a, c5/out, b5/b]
+
+* S3 and S5 are schedulers with 3 and 5 cells (respectively)
+proc S3 = (Pt1|P2|Pt3|c3.nil)\{c1, c2, c3}
+proc S5 = (Pf1|P2|P3|P4|P5|c5.nil)\{c1, c2, c3, c4, c5}
+
+proc B3 = 'b1.B3+'b2.B3+'b3.B3
+proc B5 = 'b1.B5+'b2.B5+'b3.B5+'b4.B5+'b5.B5
+
+proc Cycle3 = a1.a2.a3.Cycle3
+proc Cycle5 = a1.a2.a3.a4.a5.Cycle5
+
+* 'eq Yi Cyclei'
+proc Y3 = (S3|B3)\{b1,b2,b3}
+proc Y5 = (S5|B5)\{b1,b2,b3,b4,b5}
