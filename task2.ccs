@@ -1,17 +1,25 @@
+* Templates for `Empty', `Black' and `White' tiles, (modeled as processes)
 proc TE = 'r.TB + 'l.TW
 proc TB = b.TB + rone.TE + rtwo.TE 
 proc TW = w.TW + lone.TE + ltwo.TE
 
+* Create three black tiles, named T{1-3} where T becomes B,W or E (color)
 proc B1 = TB[b1/b, r2/rone, r3/rtwo, l1/l, r1/r, w1/w, l0/lone, l0/ltwo]
 proc B2 = TB[b2/b, r3/rone, r4/rtwo, l2/l, r2/r, w2/w, l1/lone, l0/ltwo]
 proc B3 = TB[b3/b, r4/rone, r5/rtwo, l3/l, r3/r, w3/w, l2/lone, l1/ltwo]
 
+* Create a single empty tile, named T4
 proc E4 = TE[b4/b, w4/w, r5/rone, r6/rtwo, l3/lone, l2/ltwo, l4/l, r4/r]
 
+* Create three white tiles, named T{4-7}
 proc W5 = TW[w5/w, l4/lone, l3/ltwo, l5/l, r5/r, b5/b, r6/rone, r7/rtwo]
 proc W6 = TW[w6/w, l5/lone, l4/ltwo, l6/l, r6/r, b6/b, r7/rone, r0/rtwo]
 proc W7 = TW[w7/w, l6/lone, l5/ltwo, l7/l, r7/r, b7/b, r0/rone, r0/rtwo]
 
+* Board is the main process representing the game
+* We define the board in the initial configuration and restrict on restrict_set
 proc Board = (B1|B2|B3|E4|W5|W6|W7)\restrict_set
 
+* restrict_set is the set of labels that are restricted
+* a restricted label is a label that cannot be executed
 set restrict_set = {l0,l1,l2,l3,l4,l5,l6,l7,r0,r1,r2,r3,r4,r5,r6,r7}

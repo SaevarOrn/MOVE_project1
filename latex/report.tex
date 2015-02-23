@@ -45,7 +45,7 @@
 % Set up the header and footer
 \pagestyle{fancy}
 \lhead{\hmwkAuthorName} % Top left header
-\chead{\hmwkClass\ (\hmwkClassInstructor): \hmwkTitle} % Top center head
+\chead{\hmwkClass : \hmwkTitle} % Top center head
 \rhead{\firstxmark} % Top right header
 \lfoot{\lastxmark} % Bottom left footer
 \cfoot{} % Bottom center footer
@@ -235,6 +235,8 @@
 
 \end{homeworkProblem}
 
+\newpage
+
 %----------------------------------------------------------------------------------------
 %	PROBLEM 2
 %----------------------------------------------------------------------------------------
@@ -242,12 +244,52 @@
 \begin{homeworkProblem}
 
   The second task at hand was to implement one-dimensional solitaire and to prove that it is solvable using the CCS concurrency workbench.
+  The game was modelled as processes, where each tile is a process \(B(lack), W(hite),\) or \( E(mpty) \) and the board is a set of tiles (concurrent processes). 
+  The three different colors were modelled as different processes. The processes were defined as templates and were created with appropriate relabellings to indicate location-based pairing between processes. 
+	Solitaire has the helpful property that the $Empty$ tile must be swapped with whatever tile wants to swap, so we modelled the $Empty$ tile as having output ports for each direction and colored tiles to have input ports in their respective directions 
+	($Black$ tiles can only go right and $White$ tiles can only go left) for the adjacent tile and its immediate neighbor.
+	\emph{(Note: inputs and outputs can be freely interchanged here, since it is only the pairing that matters \-- $Empty$ tiles were selected as the output to improve readability in the source code.)}
+
+	Listing \ref{../task2.ccs} demonstrates this functionality:
 
 \perlscript{../task2.ccs}{1-Dimensional Solitaire .CCS file}
+  Each template behaves differently based on what color it represents. Black tiles can jump either one or two tiles to the right depending on whether the $Empty$ tile is one or two tiles to the right (white tiles mirror this functionality in the opposite direction). Recall that $Empty$ tiles can swap with any adjacent tile.
+  Relabelling the processes ensured that changing a process (for example, \(B \rightarrow W\)) allowed new input/output pairs to be matched.
 
+
+  To transition from the configuration \([B_1|B_2|E_3|B_4|W_5|W_6|W_7]\) to \([B_1|B_2|W_3|B_4|E_5|W_6|W_7]\), $W_5$ must switch places with $E_3$ (by jumping over $B_4$).
+  This move is made possible by the consistent location-dependent relabelling \-- recall that the board is modelled as concurrent processes.
+  The relabelling on $E_3$ was \([b3/b, r4/rone, r5/rtwo, l3/l, r3/r, w3/w, l2/lone, l1/lone]\) when it was created as $B_3$, which means that $E_3$ exists as:
+\[
+	proc ~ E_3 = ~ \overline{r3}.B_3 + ~ \overline{l3}.W_3
+\]
+In a similar fashion, $W_5$ exists as:
+\[
+  proc ~ W_5 = ~ w_5.W_5 + ~ l4.E_5 + ~ l3.E_5
+\]
+Since these processes are running in parallel and restrictions are in place, $E_3$ is blocked until it is matched on either $'r3'$ or $'l3$. Incidentally, $W_5$ can match with $l3$, allowing the processes to swap 'colors' (the only other possibility would be for $W_5$ to indicate that tile 5 is white with the $w_5$ message).
+
+In a similar fashion, if we had started in the configuration \([B_1|B_2|E_3|W_4|B_5|W_6|W_7]\), $W_4$ would be able to swap places with $E_3$ on $l3$ since $W_4$ would have been:
+\[
+	proc ~= W_4 = ~ w_4.W_4 + ~ l3.E_4 + ~ l2.E_4
+\]
+
+% CORRECTNESS AND VERIFICATION DETAILS BELOW
+
+  Showing possible moves does not prove that the game is solvable (even though we can use these moves to solve it in our heads).
   To verify the correctness of the solitaire game, we simply asked if a configuration representing a solved game was reachable: 
   
 \perlscript{../task2.mu}{1-Dimensional Solitaire .MU file}
+
+  This elegant solution works due to the way that the game was modelled.
+	Colored tiles (\(B_i, W_i\)) can always indicate what color occupies tile $i$ since $proc ~ Board$ does not restrict on $W_i$ (for any $i$).
+	Therefore we can describe the property of a $solved$ game as ``Tiles $1-3$ are white and $5-7$ are black''.
+	Using the fixed point-notation of Hennessy–Milner logic, we simply ask if the state is reachable from the start configuration:
+	\[
+		\$~cwb-nc> ~ chk~Board~is\_solvable
+	\]
+
+	\ldots which the concurrency workbench indicates as being $TRUE$.
 
 % \problemAnswer{
 % \begin{center}
