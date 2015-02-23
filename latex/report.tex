@@ -32,6 +32,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+\usepackage{amsmath}
+\newcommand*{\maxeq}{\stackrel{\text{min}}{=}}
+\newcommand*{\mineq}{\stackrel{\text{max}}{=}}
+
 % Margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -184,6 +188,8 @@
 
 \begin{homeworkProblem}
 
+    In this problem, we implement a scheduler that schedules processes, $P_1,P_2,\dots,P_n$, such that they are scheduled in cyclical order, $P_i$ comes before $P_{i+1}$ and $P_{1}$ comes after $P_n$.
+    
     The scheduler is made up of a $n$ cells, where cell $i$ controls $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the proces to start and end execution. Each cell is defined using the following template:
     \[
         P = \overline{in}.a.out.b.P
@@ -224,14 +230,39 @@
     \]
     Again we use the cwb workbench to verify that $W$ and $alternate$ are weakly bisimilar.
 
+    We can also verify that the two properties hold by encoding them in as recursive Hennessy-Milner Logic formulas and verifying that the scedule satisfies these formulas.
 
-    
-    
+    We begin with the cyclical property. We can break it down into a smaller problems. We must verify that every time the scheduler performs action $a_i$, then the next $a$ action it performs is $a_{i+1}$, for each $1\le i\le n$ where $a_{n+1} = a_1$. Another way to frase this is that every time the scheduler makes an $a_i$ move, then it does not make an $a$ move until it makes an $a_{i+1}$ move. This property can be encoded using computational tree logic:
+    \begin{align*}
+        not\_a &= \bigwedge\limits_{i=1}^n\lnot EXa_i \\
+        \phi_i &= AG([a_i](A(not\_a~U~EXa_{i+1}))) \\
+    \end{align*}
+    We must also make sure that the first $a$ action performed is $a_1$. This is encoded in the following formula
+    \[
+        \psi = A(not\_a~U~EXa_1)
+    \]
+    We can then combine these formulas into a single one that verifies that the scheduler is cyclical
+    \[
+        cyclic = \psi\land \bigwedge\limits_{i=1}^n \phi_i
+    \]
 
+    The cwb workbench can then verify that the scheduler satisfies this property.
 
-    The scheduler was verifier with the file shown in listing \ref{../task1.mu} and foo bar bloo blah\ldots
+    Finally we define a property that proves that each cell in the scheduler alternates between $a$ and $b$ moves. Again we break this formula down into smaller units, we want to show that whenever a cell makes an $a$ move, it will not make an $a$ move again until it has made a $b$ move, and vice versa. We define the following formulas
+    \begin{align*}
+        \phi_i = AG([a_i]A(\lnot EXa_i~U~EXb_i)) \\
+        \psi_i = AG([b_i]A(\lnot EXb_i~U~EXa_i)) \\
+    \end{align*}
+    and then we combine these formulas so that we verify this for each cell in the scheduler
+    \[
+        alternate = \bigwedge\limits_{i=1}^n(\phi_i\land \psi_i)
+    \]
+    Again, we can easily verify that this property holds using the concurency workbench.
+
+    Listing \ref{../task1.mu} contains the formulas used to verify the properties of a scheduler of size 4.
 
 \perlscript{../task1.mu}{Scheduler .MU file}
+
 
 \end{homeworkProblem}
 
