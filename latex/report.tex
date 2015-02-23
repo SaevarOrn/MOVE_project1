@@ -8,11 +8,6 @@
 % Original author:
 % Ted Pavlic (http://www.tedpavlic.com)
 %
-% Note:
-% The \lipsum[#] commands throughout this template generate dummy text
-% to fill the template out. These commands should all be removed when 
-% writing assignment content.
-%
 % This template uses a Perl script as an example snippet of code, most other
 % languages are also usable. Configure them in the "CODE INCLUSION 
 % CONFIGURATION" section.
@@ -33,7 +28,6 @@
 \usepackage{graphicx} % Required to insert images
 \usepackage{listings} % Required for insertion of code
 \usepackage{courier} % Required for the courier font
-\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -200,7 +194,6 @@ The scheduler was verifier with the file shown in listing \ref{../task1.mu} and 
 
 \perlscript{../task1.mu}{Scheduler .MU file}
 
-\lipsum[1]
 \end{homeworkProblem}
 
 %----------------------------------------------------------------------------------------
@@ -212,6 +205,9 @@ The scheduler was verifier with the file shown in listing \ref{../task1.mu} and 
   The second task at hand was to implement one-dimensional solitaire and to prove that it is solvable using the CCS concurrency workbench.
 
 \perlscript{../task2.ccs}{1-Dimensional Solitaire .CCS file}
+
+  To verify the correctness of the solitaire game, we simply asked if a configuration representing a solved game was reachable: 
+  
 \perlscript{../task2.mu}{1-Dimensional Solitaire .MU file}
 
 % \problemAnswer{
@@ -219,7 +215,6 @@ The scheduler was verifier with the file shown in listing \ref{../task1.mu} and 
 % % \includegraphics[width=0.75\columnwidth]{example_figure} % Example image
 % \end{center}
 % 
-% \lipsum[3-5]
 % }
 \end{homeworkProblem}
 
