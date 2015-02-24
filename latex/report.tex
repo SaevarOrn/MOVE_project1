@@ -192,7 +192,7 @@
 
 \begin{homeworkProblem}
 
-    In this problem, we implement a scheduler that schedules a set of processes, $P_1,P_2,\dots,P_n$, such that the processes start in cyclical order, $P_{i+1}$ starts after $P_i$ for each $1\le i<n$ and $P_{1}$ starts after $P_n$.
+    In this first task, we implement a scheduler that schedules a set of processes, $P_1,P_2,\dots,P_n$, such that the processes start in cyclical order, $P_{i+1}$ starts after $P_i$ for each $1\le i<n$ and $P_{1}$ starts after $P_n$.
     
     The scheduler is made up of $n$ cells, where cell $i$ controls process $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the process to start and end execution. Each cell is defined using the following template:
     \[
@@ -204,16 +204,10 @@
     \]
     where $c_0 = c_n$.
 
-<<<<<<< HEAD
     Now the scheduler can simply run each cell in parallel. We restrict each $out$ and $in$ port since they must be matched by another cell but we allow $a$ and $b$ to communicate with the environment so we can monitor the actions of the scheduler. Each cell waits for a signal before it starts and so to prevent a deadlock, we send a single signal to the first cell which starts the scheduler. The scheduler can now be defined as follows:
     \[
-        S = (P_1|P_2|\dots|P_n|c_1.nil)\backslash\{c_i|1\le i\le n\}
+        S = (P_1|P_2|\dots|P_n|c_n.nil)\backslash\{c_i|1\le i\le n\}
     \]
-    
-=======
-    \perlscript{../task1.ccs}{Scheduler .CCS file (task1.ccs)}
->>>>>>> 066ae887623a831b156ff22e17d1454586315f2d
-
 
     There are two requirements that the scheduler must satisfy: Each process must start in a cyclical order ($P_{i+1}$ starts after $P_{i}$ and $P_1$ starts after $P_n$) and each cell must alternate between $a$ and $b$ actions. We will use weak bisimilarity to show that these properties hold.
     
@@ -252,7 +246,7 @@
 
     Listing \ref{../task1.ccs} shows the CCS code for a scheduler with four processes.
 
-    \perlscript{../task1.ccs}{Scheduler .CCS file}
+    \perlscript{../task1.ccs}{Scheduler .CCS file (task1.ccs)}
 
     Another way to verify that the scheduler satisfies the two requirements is to express them as logical formulas and verify that the scheduler satisfies these formulas. In this report, we will use computational tree logic since the formulas are simpler and more readable, however these formulas will also be given as recursive Hennessy-Milner Logic formulas in the .mu files included with the report.
     

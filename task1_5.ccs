@@ -2,16 +2,17 @@
 proc P = 'in.a.out.b.P
 
 * Template instantiations 
-proc P1 = P[c4/in, a1/a, c1/out, b1/b]
+proc P1 = P[c5/in, a1/a, c1/out, b1/b]
 proc P2 = P[c1/in, a2/a, c2/out, b2/b]
 proc P3 = P[c2/in, a3/a, c3/out, b3/b]
 proc P4 = P[c3/in, a4/a, c4/out, b4/b]
+proc P5 = P[c4/in, a5/a, c5/out, b5/b]
 
 * S is the scheduler
-proc S = (P1|P2|P3|P4|c4.nil)\{c1, c2, c3, c4}
+proc S = (P1|P2|P3|P4|P5|c5.nil)\{c1, c2, c3, c4, c5}
 
 * This process is used to verify that the a's are excecuted in a cycle
-proc Cycle = a1.a2.a3.a4.Cycle
+proc Cycle = a1.a2.a3.a4.a5.Cycle
 
 * This process is used to verify that each cell alternates between a and b
 proc Alt = a.b.Alt
@@ -20,10 +21,10 @@ proc Alt = a.b.Alt
 proc Z = in.'out.Z
 
 * Used to hide the b actions of the processes being scheduled
-proc B = 'b1.B+'b2.B+'b3.B+'b4.B
+proc B = 'b1.B+'b2.B+'b3.B+'b4.B+'b5.B
 
 * command 'eq Y Cycle' confirms that the scheduler is cyclical
-proc Y = (S|B)\{b1,b2,b3,b4}
+proc Y = (S|B)\{b1,b2,b3,b4,b5}
 
 * command 'eq W Alt' confirms that the schedular is alternating on a and b
 proc W = (P|Z)\{in,out}
