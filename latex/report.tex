@@ -225,7 +225,7 @@
     \]
     Now $Y$ and $cyclic$ are weakly bisimilar if and only if $S$ performs the $a$ actions cyclically.
 
-    For the second requirement, we will verify that a single cell must always alternate between $a$ and $b$. Instead of doing this for each cell in the scheduler, it is enough to show that it holds for the template they are instanciated from. Since we are only interesed in $a$ and $b$ actions, we must hide the $in$ and $out$ actions. Similar to before, we define a new process, $Z$, that can send and recieve $in$ and $out$ actions.
+    For the second requirement, we will verify that a single cell must always alternate between $a$ and $b$. Instead of doing this for each cell in the scheduler, it is enough to show that it holds for the template they are instantiated from. Since we are only interesed in $a$ and $b$ actions, we must hide the $in$ and $out$ actions. Similar to before, we define a new process, $Z$, that can send and recieve $in$ and $out$ actions.
     \[
         Z = in.Z + \overline{out}.Z \\
     \]
@@ -283,6 +283,7 @@
     \end{align*}
 
     Listing \ref{../task1.mu} contains the formulas used to verify the properties of a scheduler of size 4.
+\newpage % new page here since listing is just over one page anyway
 
 	\perlscript{../task1.mu}{Scheduler .MU file (task1.mu)}
     The .ccs and .mu files included with this report contain code for a scheduler of size $3,4$ and $5$ along with formulas used to verify that these schedulers perform as intended and using the concurrency workbench, we verified that they are correct. Each formula is also given in both CTL and recursive HML.
@@ -313,7 +314,7 @@
 
   To transition from the configuration \([B_1|B_2|E_3|B_4|W_5|W_6|W_7]\) to \([B_1|B_2|W_3|B_4|E_5|W_6|W_7]\), $W_5$ must switch places with $E_3$ (by jumping over $B_4$).
   This move is made possible by the consistent location-dependent relabelling \-- recall that the board is modelled as concurrent processes.
-  The relabelling on $E_3$ was \([b3/b, r4/rone, r5/rtwo, l3/l, r3/r, w3/w, l2/lone, l1/lone]\) when it was created as $B_3$, which means that $E_3$ exists as:
+  The relabelling on $E_3$ was \[[b3/b, r4/rone, r5/rtwo, l3/l, r3/r, w3/w, l2/lone, l1/lone]\] when it was created as $B_3$, which means that $E_3$ exists as:
 \[
 	proc ~ E_3 = ~ \overline{r3}.B_3 + ~ \overline{l3}.W_3
 \]
@@ -321,7 +322,7 @@ In a similar fashion, $W_5$ exists as:
 \[
   proc ~ W_5 = ~ w_5.W_5 + ~ l4.E_5 + ~ l3.E_5
 \]
-Since these processes are running in parallel and restrictions are in place, $E_3$ is blocked until it is matched on either $'r3'$ or $'l3$. Incidentally, $W_5$ can match with $l3$, allowing the processes to swap 'colors' (the only other possibility would be for $W_5$ to indicate that tile 5 is white with the $w_5$ message).
+Since these processes are running in parallel and restrictions are in place, $E_3$ is blocked until it is matched on either $r3$ or $l3$. Incidentally, $W_5$ can match with $l3$, allowing the processes to swap 'colors' (the only other possibility would be for $W_5$ to indicate that tile 5 is white with the $w_5$ message).
 
 In a similar fashion, if we had started in the configuration \([B_1|B_2|E_3|W_4|B_5|W_6|W_7]\), $W_4$ would be able to swap places with $E_3$ on $l3$ since $W_4$ would have been:
 \[
@@ -336,12 +337,15 @@ In a similar fashion, if we had started in the configuration \([B_1|B_2|E_3|W_4|
 \perlscript{../task2.mu}{1-Dimensional Solitaire .MU file (task2.mu)}
 
   This elegant solution works due to the way that the game was modelled.
-	Colored tiles (\(B_i, W_i\)) can always indicate what color occupies tile $i$ since $proc ~ Board$ does not restrict on $W_i$ (for any $i$).
+	Colored tiles (\(B_i, W_i\)) can always indicate what color occupies tile $i$ since $proc ~ Board$ does not restrict on $w_i$ or $b_i$ (for any $i$).
 	Therefore we can describe the property of a $solved$ game as ``Tiles $1-3$ are white and $5-7$ are black''.
 	Using the fixed point-notation of Hennessy–Milner logic, we simply ask if the $solved$ state is reachable from the start configuration:
-	\shellcmd{load task2.ccs}
-	\shellcmd{load task2.mu}
-	\shellcmd{chk Board is\_solvable}
+
+    \begin{align*}
+        \texttt{cwb-nc>}&~\texttt{load task2.ccs}   \\
+        \texttt{cwb-nc>}&~\texttt{load task2.mu}    \\
+        \texttt{cwb-nc>}&~\texttt{chk Board is\_solvable}     \\
+    \end{align*}
 
 	\ldots which the concurrency workbench indicates as being $TRUE$.
 
