@@ -19,7 +19,7 @@ prop a1aa4 = max X = [a4] ( min Z = <a1>tt \/ (nota_hml /\ [-]Z /\ <->tt)) /\ [-
 
 * alt2 := each cell alternates on ai and bi
 
-prop alt2 = a1r/\b1r/\a2r/\b2r/\a3r/\b3r/\a4r/\b4r
+prop alternate_hml = a1r/\b1r/\a2r/\b2r/\a3r/\b3r/\a4r/\b4r
 
 * Xir = Xi cannot happen until Yi happens, where X,Y are in {a,b}
 prop a1r = max X = [a1] ( min Z = <b1>tt \/ ([a1]ff /\ [-]Z /\ <->tt) ) /\ [-]X
@@ -58,5 +58,5 @@ prop a_after_b = a1_after_b1/\a2_after_b2/\a3_after_b3/\a4_after_b4
 prop b_after_a = b1_after_a1/\b2_after_a2/\b3_after_a3/\b4_after_a4
 
 * ai must follow bi and bi must follow ai
-prop alternate = a_after_b/\b_after_a
+prop alternate_ctl = a_after_b/\b_after_a
 

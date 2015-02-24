@@ -194,25 +194,32 @@
 
 \begin{homeworkProblem}
 
-    In this problem, we implement a scheduler that schedules processes, $P_1,P_2,\dots,P_n$, such that they are scheduled in cyclical order, $P_i$ comes before $P_{i+1}$ and $P_{1}$ comes after $P_n$.
+    In this problem, we implement a scheduler that schedules a set of processes, $P_1,P_2,\dots,P_n$, such that the processes start in cyclical order, $P_{i+1}$ starts after $P_i$ for each $1\le i<n$ and $P_{1}$ starts after $P_n$.
     
-    The scheduler is made up of a $n$ cells, where cell $i$ controls $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the proces to start and end execution. Each cell is defined using the following template:
+    The scheduler is made up of $n$ cells, where cell $i$ controls process $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the process to start and end execution. Each cell is defined using the following template:
     \[
         P = \overline{in}.a.out.b.P
     \]
-    We then connect the cells together using relabelling and the scheduler then simply runs each cell in parallel. We restrict the ports $in$ and $out$ since they must be matched by another cell but we allow $a$ and $b$ to communicate with the environment so we can monitor the actions the sche. Each cell initially waits for a signal before starting and so to prevent a deadlock, we send a single signal to the first cell which starts the scheduler.
+    Using relabelling, we connect the cells together so that the $out$ port of cell $i$ is matched with the $in$ port of cell $i+1$ and $a$ and $b$ are uniquely defined for each process.
+    \[
+        P_i = P[c_{i-1}/in, a_i/a, c_i/out, b_i/b]
+    \]
+    where $c_0 = c_n$.
 
-    Listing \ref{../task1.ccs} shows the CCS code for a scheduler with four processes.
+    Now the scheduler can simply run each cell in parallel. We restrict each $out$ and $in$ port since they must be matched by another cell but we allow $a$ and $b$ to communicate with the environment so we can monitor the actions of the scheduler. Each cell waits for a signal before it starts and so to prevent a deadlock, we send a single signal to the first cell which starts the scheduler. The scheduler can now be defined as follows:
+    \[
+        S = (P_1|P_2|\dots|P_n|c_1.nil)\backslash\{c_i|1\le i\le n\}
+    \]
+    
 
-    \perlscript{../task1.ccs}{Scheduler .CCS file}
 
-    There are two requirements that the scheduler must satisfy. The first requirement is that each process must start in a cyclical order, $P_{i+1}$ starts after $P_{i}$ and $P_1$ starts after $P_n$. The second requirement is that each cell must alternate between $a$ and $b$ actions.
-
-    First we will show that if we ignore the $b$ moves, then the scheduler is bisimilar to a process that simply performs actions $a_1,a_2,\dots,a_n$ repeadedly:
+    There are two requirements that the scheduler must satisfy: Each process must start in a cyclical order ($P_{i+1}$ starts after $P_{i}$ and $P_1$ starts after $P_n$) and each cell must alternate between $a$ and $b$ actions. We will use weak bisimilarity to show that these properties hold.
+    
+    If we ignore all $b$ moves, then the scheduler should be weakly bisimilar to a process that simply performs actions $a_1,a_2,\dots,a_n$ repeadedly:
     \[
         cyclic = a_1.a_2.\dots.a_n.cyclic
     \]
-    The process can perform $a$ and $b$ moves and so we need to change it such that the $b$ moves cannot be observed. The way we do this is by defining an observer that runs in parallel with the scheduler and recieves the $b$ moves of the cells.
+    In order to ignore the $b$ moves of the shceduler, we must change it such that the $b$ moves cannot be observed. The way we do this is by defining an observer that runs in parallel with the scheduler and matches each $b$ move the scheduler performs.
     \[
         B = \sum_{i=1}^n\overline{b_i}.B
     \]
@@ -220,25 +227,34 @@
     \[
         Y = (S|B)\backslash\{b_i|1\le i\le n\}
     \]
-    Using the cwb workbench, we can now easily verify that $cyclic$ and $Y$ are bisimilar.
+    Now $Y$ and $cyclic$ are weakly bisimilar if and only if $S$ performs the $a$ actions cyclically.
 
-    For the second requirement, we will verify that a single cell must always alternate between $a$ and $b$. Instead of doing this for each cell in the scheduler, it is enough to show that it holds for the template they are instanciated from. Since we are only interesed in $a$ and $b$ actions, we must hide the $in$ and $out$ actions. Similar as to before, we define a new process, $Z$, that can send and recieve $in$ and $out$ actions.
+    For the second requirement, we will verify that a single cell must always alternate between $a$ and $b$. Instead of doing this for each cell in the scheduler, it is enough to show that it holds for the template they are instanciated from. Since we are only interesed in $a$ and $b$ actions, we must hide the $in$ and $out$ actions. Similar to before, we define a new process, $Z$, that can send and recieve $in$ and $out$ actions.
     \[
-        Z = in.\overline{out}.Z \\
+        Z = in.Z + \overline{out}.Z \\
     \]
-    And then run $Z$ and the template, $P$, in parallel with the $in$ and $out$ actions restricted.
+    We then run $Z$ and the template, $P$, in parallel with the $in$ and $out$ actions restricted.
     \[
         W = (Z|P)\backslash\{in,out\}
     \]
     If the scheduler satisfies the property that each cell alternates between $a$ and $b$ actions, then $W$ should be weakly bisimilar to the following process:
     \[
-        alternate = \overline{a\vphantom{d}}.\overline{b}.alternate
+        alternate = a.b.alternate
     \]
-    Again we use the cwb workbench to verify that $W$ and $alternate$ are weakly bisimilar.
+    Using the concurrency workbench, we can now easily verify that the properties hold by showing that $cyclic$ and $Y$ are weakly bisimilar and that $W$ and $alternate$ are weakly bisimilar. The CCS code for the processes is included in the file, task1.ccs, and so the properties can be verified using the following commands:
+    \begin{align*}
+        \texttt{cwb-nc>}&~\texttt{load task1.ccs}   \\
+        \texttt{cwb-nc>}&~\texttt{eq Y Cycle}      \\
+        \texttt{cwb-nc>}&~\texttt{eq W Alt}         \\
+    \end{align*}
 
-    We can also verify that the two properties hold by encoding them in as recursive Hennessy-Milner Logic formulas and verifying that the scedule satisfies these formulas.
+    Listing \ref{../task1.ccs} shows the CCS code for a scheduler with four processes.
 
-    We begin with the cyclical property. We can break it down into a smaller problems. We must verify that every time the scheduler performs action $a_i$, then the next $a$ action it performs is $a_{i+1}$, for each $1\le i\le n$ where $a_{n+1} = a_1$. Another way to frase this is that every time the scheduler makes an $a_i$ move, then it does not make an $a$ move until it makes an $a_{i+1}$ move. This property can be encoded using computational tree logic:
+    \perlscript{../task1.ccs}{Scheduler .CCS file}
+
+    Another way to verify that the scheduler satisfies the two requirements is to express them as logical formulas and verify that the scheduler satisfies these formulas. In this report, we will use computational tree logic since the formulas are simpler and more readable, however these formulas will also be given as recursive Hennessy-Milner Logic formulas in the .mu files included with the report.
+    
+    We begin with the cyclical property. We can break it up into a number of smaller formulas, each of which examines a pair of cells. We must verify that every time the scheduler performs action $a_i$, then the next $a$ action it performs is $a_{i+1}$, for each $1\le i\le n$ where $a_{n+1} = a_1$. Another way to phrase this is that every time the scheduler makes an $a_i$ move, then it does not make an $a$ move until it makes an $a_{i+1}$ move. This property can be encoded as follows:
     \begin{align*}
         not\_a &= \bigwedge\limits_{i=1}^n\lnot EXa_i \\
         \phi_i &= AG([a_i](A(not\_a~U~EXa_{i+1}))) \\
@@ -252,23 +268,29 @@
         cyclic = \psi\land \bigwedge\limits_{i=1}^n \phi_i
     \]
 
-    The cwb workbench can then verify that the scheduler satisfies this property.
-
-    Finally we define a property that proves that each cell in the scheduler alternates between $a$ and $b$ moves. Again we break this formula down into smaller units, we want to show that whenever a cell makes an $a$ move, it will not make an $a$ move again until it has made a $b$ move, and vice versa. We define the following formulas
+    We now define a property that verifies that each cell in the scheduler alternates between $a$ and $b$ moves. Again we break this formula down into smaller units. We want to show that whenever a cell makes an $a$ move, it will not make an $a$ move again until it has made a $b$ move, and vice versa. We define the following formulas:
     \begin{align*}
         \phi_i = AG([a_i]A(\lnot EXa_i~U~EXb_i)) \\
         \psi_i = AG([b_i]A(\lnot EXb_i~U~EXa_i)) \\
     \end{align*}
-    and then we combine these formulas so that we verify this for each cell in the scheduler
+    We then combine these formulas into a single one so that we verify this for each cell in the scheduler:
     \[
         alternate = \bigwedge\limits_{i=1}^n(\phi_i\land \psi_i)
     \]
-    Again, we can easily verify that this property holds using the concurency workbench.
+    
+    Both $cyclic$ and $alternate$ properties can be verified using the concurrency workbench. These properties are defined in the file, task1.mu, and we can use the following commands to verify them:
+    \begin{align*}
+        \texttt{cwb-nc>}&~\texttt{load task1.ccs}   \\
+        \texttt{cwb-nc>}&~\texttt{load task1.mu}    \\
+        \texttt{cwb-nc>}&~\texttt{chk S cyclical\_ctl}     \\
+        \texttt{cwb-nc>}&~\texttt{chk S alternate\_ctl}  \\
+    \end{align*}
 
     Listing \ref{../task1.mu} contains the formulas used to verify the properties of a scheduler of size 4.
 
-\perlscript{../task1.mu}{Scheduler .MU file}
-
+    \perlscript{../task1.mu}{Scheduler .MU file}
+    
+    The .ccs and .mu files included with this report contain code for a scheduler of size $3,4$ and $5$ along with formulas used to verify that these schedulers perform as intended and using the concurrency workbench, we verified that they are correct. Each formula is also given in both CTL and recursive HML.
 
 \end{homeworkProblem}
 
