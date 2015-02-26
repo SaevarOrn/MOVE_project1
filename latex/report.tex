@@ -309,6 +309,7 @@
 
 \perlscript{../task2.ccs}{1-Dimensional Solitaire .CCS file (task2.ccs)}
   Each template behaves differently based on what color it represents. Black tiles can jump either one or two tiles to the right depending on whether the $Empty$ tile is one or two tiles to the right (white tiles mirror this functionality in the opposite direction). Recall that $Empty$ tiles can swap with any adjacent tile.
+	\emph{(Note: The model does not explicitly disallow a process from jumping over an identical process to swap with the empty process. This is however no issue, since would be trivial to prove that this is equivalent to two legal moves. Those two legal moves are of course swapping the empty tile twice \-- this works because there is no swapping the position of two same-colored processes has no effect.)}
   Relabelling the processes ensured that changing a process (for example, \(B \rightarrow W\)) allowed new input/output pairs to be matched.
 
 
