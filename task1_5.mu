@@ -24,7 +24,14 @@ prop a1aa5 = max X = [a5] ( min Z = <a1>tt \/ (nota_hml /\ [-]Z /\ <->tt)) /\ [-
 
 * alt2 := each cell alternates on ai and bi
 
-prop alternate_hml = a1r/\b1r/\a2r/\b2r/\a3r/\b3r/\a4r/\b4r
+prop alternate_hml = a1r/\b1r/\a2r/\b2r/\a3r/\b3r/\a4r/\b4r/\a1e/\a2e/\a3e/\a4e/\a5e
+
+* ai will eventually happen
+prop a1e = min X = <a1>tt\/([-]X/\<->tt)
+prop a2e = min X = <a1>tt\/([-]X/\<->tt)
+prop a3e = min X = <a1>tt\/([-]X/\<->tt)
+prop a4e = min X = <a1>tt\/([-]X/\<->tt)
+prop a5e = min X = <a1>tt\/([-]X/\<->tt)
 
 * Xir = Xi cannot happen until Yi happens, where X,Y are in {a,b}
 prop a1r = max X = [a1] ( min Z = <b1>tt \/ ([a1]ff /\ [-]Z /\ <->tt) ) /\ [-]X
@@ -51,6 +58,9 @@ prop a1_after_a5 = AG([a5]A (nota_ctl U <a1>tt))
 prop a1_first = A (nota_ctl U <a1>tt)
 
 prop cyclical_ctl = a1_first/\a2_after_a1/\a3_after_a2/\a4_after_a3/\a5_after_a4/\a1_after_a5
+
+* ensures that eventually each cell performs an a action
+prop a_eventually_ctl = AF(<a1>tt)/\AF(<a2>tt)/\AF(<a3>tt)/\AF(<a4>tt)/\AF(<a5>tt)
 
 prop b1_after_a1 = AG([a1]A([a1]ff U <b1>tt))
 prop a1_after_b1 = AG([b1]A([b1]ff U <a1>tt))

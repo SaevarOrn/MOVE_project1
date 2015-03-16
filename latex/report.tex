@@ -194,9 +194,9 @@
 
     In this first task, we implement a scheduler that schedules a set of processes, $P_1,P_2,\dots,P_n$, such that the processes start in cyclical order, $P_{i+1}$ starts after $P_i$ for each $1\le i<n$ and $P_{1}$ starts after $P_n$.
     
-    The scheduler is made up of $n$ cells, where cell $i$ controls process $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the process to start and end execution. Each cell is defined using the following template:
+    The scheduler is made up of $n$ cells, where cell $i$ controls process $P_i$. A cell contains $4$ ports it uses for comunication. $in$ and $out$ ports are used to comunicate with other cells in the scheduler and $a$ and $b$ are used to signal the process to start and end execution. Each cell must first wait for a signal on it's $in$ port before starting it's process. It will then signal the next cell to start and signal that it process has ended but we do not make any constraints on the order these two actions are performed in. Each cell is defined using the following template:
     \[
-        P = \overline{in}.a.out.b.P
+        P = \overline{in}.a.(out.b.P + b.out.P)
     \]
     Using relabelling, we connect the cells together so that the $out$ port of cell $i$ is matched with the $in$ port of cell $i+1$ and $a$ and $b$ are uniquely defined for each process.
     \[
@@ -259,19 +259,22 @@
     \[
         \psi = A(not\_a~U~EXa_1)
     \]
+    Since we define $\psi$ using strong until, it also verifies that the scheduler actually performs $a_1$ at some point.
+
     We can then combine these formulas into a single one that verifies that the scheduler is cyclical
     \[
         cyclic = \psi\land \bigwedge\limits_{i=1}^n \phi_i
     \]
 
-    We now define a property that verifies that each cell in the scheduler alternates between $a$ and $b$ moves. Again we break this formula down into smaller units. We want to show that whenever a cell makes an $a$ move, it will not make an $a$ move again until it has made a $b$ move, and vice versa. We define the following formulas:
+    We now define a property that verifies that each cell in the scheduler alternates between $a$ and $b$ moves. Again we break this formula down into smaller units. We want to show that whenever a cell makes an $a$ move, it will not make an $a$ move again until it has made a $b$ move, and vice versa. We also want to make sure that each cell at some point makes either an $a$ or a $b$ move. We define the following formulas:
     \begin{align*}
-        \phi_i = AG([a_i]A(\lnot EXa_i~U~EXb_i)) \\
-        \psi_i = AG([b_i]A(\lnot EXb_i~U~EXa_i)) \\
+        \phi_i &= AG([a_i]A(\lnot EXa_i~U~EXb_i)) \\
+        \psi_i &= AG([b_i]A(\lnot EXb_i~U~EXa_i)) \\
+        \gamma_i &= AF(EXa_i) \\
     \end{align*}
     We then combine these formulas into a single one so that we verify this for each cell in the scheduler:
     \[
-        alternate = \bigwedge\limits_{i=1}^n(\phi_i\land \psi_i)
+        alternate = \bigwedge\limits_{i=1}^n(\phi_i\land \psi_i\land\gamma_i)
     \]
     
     Both $cyclic$ and $alternate$ properties can be verified using the concurrency workbench. These properties are defined in the file, task1.mu, and we can use the following commands to verify them:
