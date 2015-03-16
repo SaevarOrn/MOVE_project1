@@ -1,5 +1,5 @@
 * from t1-3
-proc P = 'in.a.out.b.P
+proc P = 'in.a.(out.b.P+b.out.P)
 proc P1 = P[c3/in, a1/a, c1/out, b1/b]
 
 * D1
