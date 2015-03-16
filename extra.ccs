@@ -1,0 +1,15 @@
+* from t1-3
+proc P = 'in.a.out.b.P
+proc P1 = P[c3/in, a1/a, c1/out, b1/b]
+
+* D1
+proc D1 = a1.b1.D1
+
+* sink
+proc Sink = c3.Sink + 'c1.Sink
+
+* Cell
+proc C = (P1|Sink)\{c1, c3}
+
+** Run: eq D1 C
+* Shows that each cell is alternating on a,b
